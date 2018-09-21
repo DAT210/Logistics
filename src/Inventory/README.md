@@ -10,6 +10,6 @@ To get every item in the db you need to call this URL http://127.0.0.1:5000/inve
 To add an item into the db, you need to call this URL http://127.0.0.1:5000/inventory in POST mode with a JSON like this:
 
 Example:
-{"item_name" : "Cookie", "item_amount" : "5"}
+{"itemName" : "Cookie", "itemAmount" : "5"}
 
 Cookie is already in the database.
