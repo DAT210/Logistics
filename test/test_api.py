@@ -32,9 +32,9 @@ class TestFlaskApi(unittest.TestCase):
 
 
     # Testing routing
-    #def test_location_fail(self):
-        #response = self.app.get('/locations/999/inventories')
-        #self.assertEqual('404 OK', response.status)
+    def test_location_fail(self):
+        response = self.app.get('/locations/999/inventories')
+        self.assertEqual('404 OK', response.status)
 
 
 if __name__ == "__main__":
