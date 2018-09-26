@@ -3,11 +3,12 @@ sys.path.append('../')
 import unittest
 import json
 
-from src.main import app, db
+from src import create_app, db
 
 class TestFlaskApi(unittest.TestCase):
 
     def setUp(self):
+        app = create_app()
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/test.db'
         self.app = app.test_client()
