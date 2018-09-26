@@ -1,16 +1,11 @@
-import sys
-sys.path.append('../')
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-from src.models import db, Item, Location
+from .models import db, Item, Location
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
+bp = Blueprint('locations', __name__, url_prefix='/locations')
 
 
-@app.route('/locations/<int:locId>/inventories', methods=['GET'])
+@bp.route('<int:locId>/inventories', methods=['GET'])
 def get_all_items(locId):
     location = Location.query.filter_by(id = locId).first()
     output = []
@@ -27,7 +22,7 @@ def get_all_items(locId):
     return resp
 
 
-@app.route('/locations/<int:locId>/inventories/<string:itemName>', methods=['GET'])
+@bp.route('<int:locId>/inventories/<string:itemName>', methods=['GET'])
 def get_amount_of_item(locId, itemName):
     get_item = Item.query.filter_by(location_id = locId, name = itemName).first()
 
@@ -39,7 +34,7 @@ def get_amount_of_item(locId, itemName):
     return resp, 200
 
 
-@app.route('/locations/<int:locId>/inventories', methods=['PUT'])
+@bp.route('<int:locId>/inventories', methods=['PUT'])
 def update_item_amount():
     try:
         data = request.get_json()
@@ -51,7 +46,7 @@ def update_item_amount():
     return ''
 
 
-@app.route('/locations/<int:locId>/inventories', methods=['POST'])
+@bp.route('<int:locId>/inventories', methods=['POST'])
 def create_new_item(locId):
     try:
         data = request.get_json()
@@ -75,9 +70,6 @@ def create_new_item(locId):
     return jsonify({'code' : '201', 'message' : 'New item created', 'description' : 'An item has successfully been created'})
 
 
-@app.route('/locations/<int:locId>/inventories/<string:itemName>', methods=['DELETE'])
+@bp.route('<int:locId>/inventories/<string:itemName>', methods=['DELETE'])
 def delete_group_items():
     return ''
-
-if __name__ == '__main__':
-    app.run(debug=True)
