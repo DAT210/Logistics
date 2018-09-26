@@ -1,0 +1,31 @@
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class Location(db.Model):
+    __tablename__ = "location"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    items = db.relationship('Item', backref='item', lazy=True)
+
+class Item(db.Model):
+    __tablename__ = "inventory"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    amount = db.Column(db.Integer)
+	inStock = db.Column(db.Boolean)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+	courseItems = db.relationship('CourseItem', backref='courseItem', lazy=True)
+	
+class Course(db.Model):
+	__tablename__ = "course"
+	idcourse = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(80), nullable=False)
+	price = db.Column(db.Double, nullable=False)
+	courseItems = db.relationship('CourseItem', backref='courseItem', lazy=True)
+	
+class CourseItem(db.Model):
+	__tablename__ = "courseItem"
+	idcourse = db.Column(db.Integer, db.ForeignKey('course.idcourse'), primary_key=True)
+	iditem = db.Column(db.Integer, db.ForeignKey('inventory.id'), primary_key=True)
+	

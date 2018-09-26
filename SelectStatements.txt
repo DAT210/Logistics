@@ -1,0 +1,12 @@
+SELECT 	
+	ingredient.name 
+FROM
+	ingredient,
+	course,
+	courseIngredient
+WHERE
+	course.idcourse = 4
+AND 
+	courseIngredient.idingredient = ingredient.idingredient
+AND 
+	courseIngredient.idcourse = course.idcourse;

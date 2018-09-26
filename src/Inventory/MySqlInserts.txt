@@ -1,0 +1,95 @@
+INSERT INTO course (idcourse, name, price)
+VALUES (1, "Pepperoni Spesial", 199);
+
+INSERT INTO course (idcourse, name, price)
+VALUES (2, "Ham and Pineapple", 189);
+
+INSERT INTO course (idcourse, name, price)
+VALUES (3, "Norge", 219);
+
+INSERT INTO course (idcourse, name, price)
+VALUES (4, "Husets", 239);
+
+INSERT INTO ingredient (idingredient, name, quantity, inStock) 
+VALUES (1, "tomato sauce", 35, 1);
+
+INSERT INTO ingredient (idingredient, name, quantity, inStock) 
+VALUES (2, "ham", 40, 1);
+
+INSERT INTO ingredient (idingredient, name, quantity, inStock) 
+VALUES (3, "kebabkjøtt", 20, 1);
+
+INSERT INTO ingredient (idingredient, name, quantity, inStock) 
+VALUES (4, "Pineapple", 55, 1);
+
+INSERT INTO ingredient (idingredient, name, quantity, inStock) 
+VALUES (5, "Pepperoni", 31, 1);
+
+INSERT INTO ingredient (idingredient, name, quantity, inStock) 
+VALUES (6, "Pommes Frites", 53, 1);
+
+INSERT INTO ingredient (idingredient, name, quantity, inStock) 
+VALUES (7, "Cheese", 109, 1);
+
+
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (8, 1, 1);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (9, 1, 5);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (10, 1, 7);
+
+
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (11, 2, 1);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (12, 2, 2);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (13, 2, 7);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (18, 2, 3);
+
+
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (14, 3, 1);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (15, 3, 3);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (16, 3, 6);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (17, 3, 7);
+
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (1, 4, 1);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (2, 4, 2);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (3, 4, 3);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (4, 4, 4);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (5, 4, 5);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (6, 4, 6);
+
+INSERT INTO courseIngredient (idcourseingredient, idcourse, idingredient)
+VALUES (7, 4, 7);
+
+
