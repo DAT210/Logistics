@@ -34,16 +34,26 @@ def get_amount_of_item(locId, itemName):
     return resp, 200
 
 
-@bp.route('<int:locId>/inventories', methods=['PUT'])
-def update_item_amount():
+@bp.route('<int:locId>/inventories/<string:itemName>', methods=['PUT'])
+def update_item_amount(locId, itemName):
     try:
         data = request.get_json()
     except (ValueError, KeyError, TypeError):
         resp = jsonify({'code' : '400', 'message' : 'Failed to decode','description' : 'Expected a JSON object'})
         return resp, 400
+    
+    if not data['itemAmount']:
+        return jsonify({'code' : '400', 'message' : 'Not enough data', 'description' : 'Missing item name or amount'})
+    
+    get_item = Item.query.filter_by(location_id = locId, name = itemName).first()
+    if not get_item:
+        resp = jsonify({'code' : '404', 'message' : 'Item not in inventory', 'description' : 'This item is not located in this inventory'})
+        return resp, 404
+    
+    get_item.amount = data['itemAmount']
 
-
-    return ''
+    resp = jsonify({'code' : '204', 'message' : 'Item updated','description' : 'The item has successfully been updated'})
+    return resp,204
 
 
 @bp.route('<int:locId>/inventories', methods=['POST'])
@@ -71,5 +81,5 @@ def create_new_item(locId):
 
 
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['DELETE'])
-def delete_group_items():
+def delete_item():
     return ''
