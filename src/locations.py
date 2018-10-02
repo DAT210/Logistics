@@ -51,6 +51,7 @@ def update_item_amount(locId, itemName):
         return resp, 404
     
     get_item.amount = data['itemAmount']
+    db.session.commit()
 
     resp = jsonify({'code' : '204', 'message' : 'Item updated','description' : 'The item has successfully been updated'})
     return resp,204
