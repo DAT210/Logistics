@@ -1,1 +1,0 @@
-ingredients = flask_sqlalchemy.query(Item).filter(Item.id == CourseItem.iditem).filter(CourseItem.idcourse == Course.id)
