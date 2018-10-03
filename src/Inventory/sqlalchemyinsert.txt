@@ -1,11 +1,11 @@
 from flask_sqlalchemy import Models
 
 
-me = Item(1, "tomato sauce", 35, 1)
+me = Item(1, "Tomato sauce", 35, 1)
 db.session.add(me)
-me = Item(2, "ham", 40, 2)
+me = Item(2, "Ham", 40, 2)
 db.session.add(me)
-me = Item(3, "kebabkjøtt", 20, 2)
+me = Item(3, "Kebabkjøtt", 20, 2)
 db.session.add(me)
 me = Item(4, "Pineapple", 55, 3)
 db.session.add(me)
