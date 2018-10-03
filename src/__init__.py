@@ -13,7 +13,7 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    from . import locations
-    app.register_blueprint(locations.bp)
+    from . import inventories
+    app.register_blueprint(inventories.bp)
 
     return app
