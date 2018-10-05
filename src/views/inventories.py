@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-from .models import db, Item, Location
+from ..models import db, Item, Location
 
 bp = Blueprint('inventories', __name__, url_prefix='/v1/locations')
 
@@ -19,9 +19,7 @@ def get_all_items(locId):
         item_data['amount'] = item.amount
         output.append(item_data)
 
-    resp = jsonify({'items' : output})
-
-    return resp, 200
+    return jsonify({'items' : output}), 200
 
 
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['GET'])
@@ -34,8 +32,7 @@ def get_amount_of_item(locId, itemName):
     if not get_item:
         return jsonify({'code' : '404', 'message' : 'Item not in inventory', 'description' : 'This item is not located in this inventory'}), 404
 
-    resp = jsonify({'amount' : get_item.amount})
-    return resp, 200
+    return jsonify({'amount' : get_item.amount}), 200
 
 
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['PUT'])
@@ -45,19 +42,18 @@ def update_item_amount(locId, itemName):
 
     if not request.data:
         return jsonify({'code' : '400', 'message' : 'No JSON','description' : 'Expected a JSON object'}), 400
+
     try:
         data = request.get_json()
     except (ValueError, KeyError, TypeError):
-        resp = jsonify({'code' : '400', 'message' : 'Failed to decode','description' : 'Expected a JSON object'})
-        return resp, 400
+        return jsonify({'code' : '400', 'message' : 'Failed to decode','description' : 'Expected a JSON object'}), 400
     
     if not 'itemAmount' in data:
-        return jsonify({'code' : '400', 'message' : 'Not enough data', 'description' : 'Missing item name or amount'})
+        return jsonify({'code' : '400', 'message' : 'Not enough data', 'description' : 'Missing item name or amount'}), 400
     
     get_item = Item.query.filter_by(location_id = locId, name = itemName).first()
     if not get_item:
-        resp = jsonify({'code' : '404', 'message' : 'Item not in inventory', 'description' : 'This item is not located in this inventory'})
-        return resp, 404
+        return jsonify({'code' : '404', 'message' : 'Item not in inventory', 'description' : 'This item is not located in this inventory'}), 404
     
     get_item.amount = data['itemAmount']
     db.session.commit()
