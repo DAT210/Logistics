@@ -1,9 +1,8 @@
-import os
 import sys
 sys.path.append('../')
-
 from .models import db
 from flask import Flask
+from .views import inventories
 
 
 def create_app(test_config=None):
@@ -13,7 +12,6 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    from . import inventories
     app.register_blueprint(inventories.bp)
 
     return app

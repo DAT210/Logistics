@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-from .models import db, Item, Location
+from ..models import db, Item, Location
 
 bp = Blueprint('inventories', __name__, url_prefix='/v1/locations')
 
