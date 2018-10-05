@@ -2,7 +2,7 @@ import sys
 sys.path.append('../')
 from .models import db
 from flask import Flask
-from .views import inventories
+from .views import inventories, locations
 
 
 def create_app(test_config=None):
@@ -13,5 +13,6 @@ def create_app(test_config=None):
     db.init_app(app)
 
     app.register_blueprint(inventories.bp)
+    app.register_blueprint(locations.bp)
 
     return app
