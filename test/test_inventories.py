@@ -49,12 +49,17 @@ class TestFlaskApi(unittest.TestCase):
 
     # Testing PUT methods
     def test_update_item(self):
-        data = {'itemAmount' : 20}
+        data = {'itemAmount' : 20, 'action' : 'add'}
         response = self.app.put('v1/locations/1/inventories/Milk', data=json.dumps(data), content_type='application/json')
         self.assertEqual('204 NO CONTENT', response.status)
 
+    def test_update_item_bad_action(self):
+        data = {'itemAmount' : 20, 'action' : 'multiply'}
+        response = self.app.put('v1/locations/1/inventories/Milk', data=json.dumps(data), content_type='application/json')
+        self.assertEqual('400 BAD REQUEST', response.status)
+
     def test_update_no_item_fail(self):
-        data = {'itemAmount' : 20}
+        data = {'itemAmount' : 20, 'action' : 'add'}
         response = self.app.put('v1/locations/1/inventories/lego', data=json.dumps(data), content_type='application/json')
         self.assertEqual('404 NOT FOUND', response.status)
 
