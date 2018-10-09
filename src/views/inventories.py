@@ -48,14 +48,25 @@ def update_item_amount(locId, itemName):
     except (ValueError, KeyError, TypeError):
         return jsonify({'code' : '400', 'message' : 'Failed to decode','description' : 'Expected a JSON object'}), 400
     
-    if not 'itemAmount' in data:
-        return jsonify({'code' : '400', 'message' : 'Not enough data', 'description' : 'Missing item name or amount'}), 400
+    if not 'itemAmount' in data or not 'action' in data:
+        return jsonify({'code' : '400', 'message' : 'Not enough data', 'description' : 'Missing amount or action'}), 400
     
     get_item = Item.query.filter_by(location_id = locId, name = itemName).first()
     if not get_item:
         return jsonify({'code' : '404', 'message' : 'Item not in inventory', 'description' : 'This item is not located in this inventory'}), 404
     
-    get_item.amount = data['itemAmount']
+    if data['action'] == 'add':
+        get_item.amount = get_item.amount + data['itemAmount']
+
+    elif data['action'] == 'subtract':
+        amount = get_item.amount - data['itemAmount']
+        if amount < 0:
+            amount = 0
+        get_item.amount = amount
+    
+    else:
+        return jsonify({'code' : '400', 'message' : 'Invalid action', 'description' : 'Uknown action in input'}), 400
+
     db.session.commit()
 
     return jsonify({'code' : '204', 'message' : 'Item updated','description' : 'The item has successfully been updated'}),204

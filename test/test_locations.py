@@ -1,5 +1,6 @@
 import sys
 sys.path.append('../')
+import os
 import unittest
 import json
 
@@ -32,7 +33,7 @@ class TestFlaskApi(unittest.TestCase):
         response = self.app.post('v1/locations', data=json.dumps(data), content_type='application/json')
         self.assertEqual('201 CREATED', response.status)
 
-    def test_add_item_no_data(self):
+    def test_add_location_no_data(self):
         response = self.app.post('v1/locations')
         self.assertEqual('400 BAD REQUEST', response.status)
 
@@ -41,22 +42,22 @@ class TestFlaskApi(unittest.TestCase):
         self.assertEqual('400 BAD REQUEST', response.status)
 
     # Testing PUT methods
-    def test_update_item(self):
+    def test_update_location(self):
         data = {'locationName' : 'Big Horn'}
-        response = self.app.put('v1/locations', data=json.dumps(data), content_type='application/json')
+        response = self.app.put('v1/locations/1', data=json.dumps(data), content_type='application/json')
         self.assertEqual('204 NO CONTENT', response.status)
 
-    def test_update_no_item_fail(self):
+    def test_update_no_location_fail(self):
         data = {'locationName' : 'Wendy'}
         response = self.app.put('v1/locations/999', data=json.dumps(data), content_type='application/json')
         self.assertEqual('404 NOT FOUND', response.status)
 
     # Testing DELETE methods
-    def test_delete_item(self):
+    def test_delete_location(self):
         response = self.app.delete('v1/locations/3')
         self.assertEqual('204 NO CONTENT', response.status)
     
-    def test_delete_item_not_found(self):
+    def test_delete_location_not_found(self):
         response = self.app.delete('v1/locations/999')
         self.assertEqual('404 NOT FOUND', response.status)
 
