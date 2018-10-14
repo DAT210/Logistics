@@ -4,6 +4,8 @@ from ..models import db, Location
 
 bp = Blueprint('locations', __name__, url_prefix='/v1/locations')
 
+
+# Route to get all locations
 @bp.route('', methods=['GET'])
 def get_all_locations():
 
@@ -19,6 +21,7 @@ def get_all_locations():
     return jsonify({'locations' : output}), 200
 
 
+# Route to get information about a specific location
 @bp.route('<int:locId>', methods=['GET'])
 def get_name_of_location(locId):
     get_location = Location.query.filter_by(id = locId).first()
@@ -28,6 +31,7 @@ def get_name_of_location(locId):
     return jsonify({'id' : get_location.id, 'name' : get_location.name}), 200
 
 
+# Route to update the name of a location
 @bp.route('<int:locId>', methods=['PUT'])
 def update_location_name(locId):
     get_location = Location.query.filter_by(id = locId).first()
@@ -51,6 +55,7 @@ def update_location_name(locId):
     return jsonify({'code' : '204', 'message' : 'Location updated','description' : 'The location has successfully been updated'}),204
 
 
+# Route to add a new location
 @bp.route('', methods=['POST'])
 def create_new_location():
     if not request.data:
@@ -74,6 +79,7 @@ def create_new_location():
     return jsonify({'code' : '201', 'message' : 'New location created', 'description' : 'A location has successfully been created'}), 201
 
 
+# Route to delete a location
 @bp.route('<int:locId>', methods=['DELETE'])
 def delete_location(locId):
     get_location = Location.query.filter_by(id = locId).first()

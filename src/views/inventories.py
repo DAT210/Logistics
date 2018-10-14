@@ -5,8 +5,10 @@ from ..models import db, Item, Location
 bp = Blueprint('inventories', __name__, url_prefix='/v1/locations')
 
 
+# Route to get every item in the inventory of the specified location
 @bp.route('<int:locId>/inventories', methods=['GET'])
 def get_all_items(locId):
+    # Check if location exists in the database, this test is in every route
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 
@@ -22,6 +24,7 @@ def get_all_items(locId):
     return jsonify({'items' : output}), 200
 
 
+# Route to get a specific item in the inventory of a location
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['GET'])
 def get_amount_of_item(locId, itemName):
     if not Location.query.filter_by(id=locId).first():
@@ -35,23 +38,28 @@ def get_amount_of_item(locId, itemName):
     return jsonify({'amount' : get_item.amount}), 200
 
 
+# Route to update a item by adding or subtracting the amount
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['PUT'])
 def update_item_amount(locId, itemName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
-
+    
+    # Check if there is data in the request
     if not request.data:
         return jsonify({'code' : '400', 'message' : 'No JSON','description' : 'Expected a JSON object'}), 400
 
+    # If there is data in the request, then try to decode the json.
     try:
         data = request.get_json()
     except (ValueError, KeyError, TypeError):
         return jsonify({'code' : '400', 'message' : 'Failed to decode','description' : 'Expected a JSON object'}), 400
     
+    # Check if the names are correct in the json input, and if they exist
     if not 'itemAmount' in data or not 'action' in data:
         return jsonify({'code' : '400', 'message' : 'Not enough data', 'description' : 'Missing amount or action'}), 400
     
     get_item = Item.query.filter_by(location_id = locId, name = itemName).first()
+    # Check if the item exists in the inventory
     if not get_item:
         return jsonify({'code' : '404', 'message' : 'Item not in inventory', 'description' : 'This item is not located in this inventory'}), 404
     
@@ -72,6 +80,7 @@ def update_item_amount(locId, itemName):
     return jsonify({'code' : '204', 'message' : 'Item updated','description' : 'The item has successfully been updated'}),204
 
 
+# Route to add new item to the inventory
 @bp.route('<int:locId>/inventories', methods=['POST'])
 def create_new_item(locId):
     if not Location.query.filter_by(id=locId).first():
@@ -105,6 +114,7 @@ def create_new_item(locId):
     return jsonify({'code' : '201', 'message' : 'New item created', 'description' : 'An item has successfully been created'}), 201
 
 
+# Route to delete a item from the inventory
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['DELETE'])
 def delete_item(locId, itemName):
     if not Location.query.filter_by(id=locId).first():

@@ -19,11 +19,11 @@ class TestFlaskApi(unittest.TestCase):
         response = self.app.get('v1/locations')
         self.assertEqual('200 OK', response.status)
 
-    def test_get_one_locations(self):
+    def test_get_one_location(self):
         response = self.app.get('v1/locations/1')
         self.assertEqual('200 OK', response.status)
 
-    def test_get_one_locations_fail(self):
+    def test_get_one_location_fail(self):
         response = self.app.get('v1/locations/999')
         self.assertEqual('404 NOT FOUND', response.status)
 
