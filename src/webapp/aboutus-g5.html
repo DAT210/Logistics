@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- These are the three fonts used in the site, all are from google font leapsis-->
+<link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet"> <!-- used for menu line-->
+<link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet"><!-- used for h1,h2,h3 line-->
+<link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'><!-- used for logo-->
+
+<link rel="stylesheet" type="text/css" href="test1.css"> <!-- CSS file -->
+</head>
+
+<style>
+#map{
+  height:400px;
+  width:600px;
+  margin-top: 3%;
+  margin-left: 30%;
+}
+</style>
+
+<body>
+
+<!-- this is the header portion-->
+  <div id="logo"> <!-- this is the logo-->
+      <h1>food</h1>
+  </div>
+
+<!-- This is the menu line to header portion-->
+  <div id= "menu" >
+    <ul>
+       <li class='active'><a href='#'><span>ABOUT US</span></a></li>
+       <li><a href='#'><span>MENU</span></a></li>
+       <li><a href='#'><span>BOOK HERE</span></a></li>
+       <li class='last'><a href='#'><span>HOME</span></a></li>
+    </ul>
+  </div>
+
+<!-- this is where the header ends-->
+
+<main>
+<!-- This is some about us text-->
+  <div class="find">
+      <h1> find our restaurants here</h1>
+  </div>
+</main>
+
+    <!-- This is where the google maps implementation starts-->
+
+   <!-- tried to create a search box javascript implemen --->
+
+     <div id="map"></div>
+
+
+     <!-- this is the script for the actual map-->
+     <script>
+    function initMap(){
+
+
+      // The map options
+      var options = {
+        zoom:16, // how far zoomed in
+        center:{lat:58.97005,lng:5.73332} // where zoomed in
+      }
+
+      // Creates a new map
+      var map = new google.maps.Map(document.getElementById('map'), options);
+
+
+      // points where there are resturants
+      var markers = [
+        {
+          coords:{lat:58.97005,lng:5.73332},
+
+        },
+        {
+          coords:{lat:58.96338,lng:5.75382},
+
+        },
+        {
+          coords:{lat:58.970504797577476, lng:5.733140225727311}
+        },
+
+        {
+          coords:{lat:58.9698411320831, lng:5.735800977070085}
+        }
+
+      ];
+
+      // Loop through markers
+      for(var i = 0;i < markers.length;i++){
+        // Add marker
+        addMarker(markers[i]);
+      }
+
+      // Add Marker Function
+      function addMarker(props){
+        var marker = new google.maps.Marker({
+          position:props.coords,
+          map:map,
+          //icon:props.iconImage
+        });
+
+        //checks if the content is right
+        if(props.content){
+          var infoWindow = new google.maps.InfoWindow({
+            content:props.content
+          });
+
+          marker.addListener('click', function(){
+            infoWindow.open(map, marker);
+          });
+        }
+      }
+    }
+  </script>
+
+    <!-- A script file that retrives the google maps (REMEBER TO ADD your OWN KEY)-->
+     <script async defer
+       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzcAhxZdMLLsWdEY3BGQYWUW8xFGk3Ths&callback=initMap">
+     </script>
+  </div>
+
+  <div class = "media">
+
+    <h1> find us here </h1>
+
+    <scr="instatest1.jpg">
+
+  </div>
+
+</body>
