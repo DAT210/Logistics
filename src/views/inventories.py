@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from ..models import db, Item, Location
 from .locations import user, token_required
 
-bp = Blueprint('inventories', __name__, url_prefix='/v1/locations')
+bp = Blueprint('inventories', __name__, url_prefix='/v1/locations/')
 
 
 # Route to get every item in the inventory of the specified location

@@ -4,7 +4,7 @@ from ..models import db, Location
 import jwt, datetime
 from functools import wraps
 
-bp = Blueprint('locations', __name__, url_prefix='/v1/locations')
+bp = Blueprint('locations', __name__, url_prefix='/v1/locations/')
 
 
 # Temporary user to test jwt token authentication.
