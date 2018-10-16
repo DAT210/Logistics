@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from ..models import db, Item, Location
+from .locations import user, token_required
 
-bp = Blueprint('inventories', __name__, url_prefix='/v1/locations')
+bp = Blueprint('inventories', __name__, url_prefix='/v1/locations/')
 
 
 # Route to get every item in the inventory of the specified location
 @bp.route('<int:locId>/inventories', methods=['GET'])
-def get_all_items(locId):
+@token_required
+def get_all_items(current_user, locId):
     # Check if location exists in the database, this test is in every route
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
@@ -26,7 +28,8 @@ def get_all_items(locId):
 
 # Route to get a specific item in the inventory of a location
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['GET'])
-def get_amount_of_item(locId, itemName):
+@token_required
+def get_amount_of_item(current_user, locId, itemName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 
@@ -40,7 +43,8 @@ def get_amount_of_item(locId, itemName):
 
 # Route to update a item by adding or subtracting the amount
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['PUT'])
-def update_item_amount(locId, itemName):
+@token_required
+def update_item_amount(current_user, locId, itemName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
     
@@ -82,7 +86,8 @@ def update_item_amount(locId, itemName):
 
 # Route to add new item to the inventory
 @bp.route('<int:locId>/inventories', methods=['POST'])
-def create_new_item(locId):
+@token_required
+def create_new_item(current_user, locId):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 
@@ -116,7 +121,8 @@ def create_new_item(locId):
 
 # Route to delete a item from the inventory
 @bp.route('<int:locId>/inventories/<string:itemName>', methods=['DELETE'])
-def delete_item(locId, itemName):
+@token_required
+def delete_item(current_user, locId, itemName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 
