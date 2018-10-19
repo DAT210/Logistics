@@ -2,7 +2,10 @@ version: "3"
 services:
   web:
     # replace username/repo:tag with your name and image details
-    image: pythontest
+    
+    #image: pythontest
+    #Building image from Dockerfile not prebuilt image
+    build: .
     deploy:
       replicas: 1
       resources:
