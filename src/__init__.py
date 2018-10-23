@@ -2,7 +2,7 @@ import sys, os
 sys.path.append('../')
 from .models import db
 from flask import Flask
-from .views import inventories, locations
+from .views import ingredients, locations
 
 # Creates the flask application
 def create_app(test_config=None):
@@ -13,7 +13,7 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    app.register_blueprint(inventories.bp)
+    app.register_blueprint(ingredients.bp)
     app.register_blueprint(locations.bp)
 
     return app

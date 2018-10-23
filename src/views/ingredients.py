@@ -3,11 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from ..models import db, Item, Location
 from .locations import user, token_required
 
-bp = Blueprint('inventories', __name__, url_prefix='/v1/locations/')
+bp = Blueprint('ingredients', __name__, url_prefix='/v1/locations/')
+
 
 
 # Route to get every item in the inventory of the specified location
-@bp.route('<int:locId>/inventories', methods=['GET'])
+@bp.route('<int:locId>/ingredients', methods=['GET'])
 @token_required
 def get_all_items(current_user, locId):
     # Check if location exists in the database, this test is in every route
@@ -27,7 +28,7 @@ def get_all_items(current_user, locId):
 
 
 # Route to get a specific item in the inventory of a location
-@bp.route('<int:locId>/inventories/<string:itemName>', methods=['GET'])
+@bp.route('<int:locId>/ingredients/<string:itemName>', methods=['GET'])
 @token_required
 def get_amount_of_item(current_user, locId, itemName):
     if not Location.query.filter_by(id=locId).first():
@@ -42,7 +43,7 @@ def get_amount_of_item(current_user, locId, itemName):
 
 
 # Route to update a item by adding or subtracting the amount
-@bp.route('<int:locId>/inventories/<string:itemName>', methods=['PUT'])
+@bp.route('<int:locId>/ingredients/<string:itemName>', methods=['PUT'])
 @token_required
 def update_item_amount(current_user, locId, itemName):
     if not Location.query.filter_by(id=locId).first():
@@ -62,6 +63,10 @@ def update_item_amount(current_user, locId, itemName):
     if not 'itemAmount' in data or not 'action' in data:
         return jsonify({'code' : '400', 'message' : 'Not enough data', 'description' : 'Missing amount or action'}), 400
     
+    # Check if itemAmount is a int
+    if not isinstance(data['itemAmount'], int):
+        return jsonify({'code' : '400', 'message' : 'Bad input', 'description' : 'Amount needs to be an integer'}), 400
+
     get_item = Item.query.filter_by(location_id = locId, name = itemName).first()
     # Check if the item exists in the inventory
     if not get_item:
@@ -85,7 +90,7 @@ def update_item_amount(current_user, locId, itemName):
 
 
 # Route to add new item to the inventory
-@bp.route('<int:locId>/inventories', methods=['POST'])
+@bp.route('<int:locId>/ingredients', methods=['POST'])
 @token_required
 def create_new_item(current_user, locId):
     if not Location.query.filter_by(id=locId).first():
@@ -106,6 +111,8 @@ def create_new_item(current_user, locId):
     if not 'itemName' in data or not 'itemAmount' in data:
         return jsonify({'code' : '400', 'message' : 'Not enough data', 'description' : 'Missing item name or amount'}), 400
 
+    if not isinstance(data['itemAmount'], int):
+        return jsonify({'code' : '400', 'message' : 'Bad input', 'description' : 'Amount needs to be an integer'}), 400
 
     location = Location.query.filter_by(id=locId).first()
     for item in location.items:
@@ -120,7 +127,7 @@ def create_new_item(current_user, locId):
 
 
 # Route to delete a item from the inventory
-@bp.route('<int:locId>/inventories/<string:itemName>', methods=['DELETE'])
+@bp.route('<int:locId>/ingredients/<string:itemName>', methods=['DELETE'])
 @token_required
 def delete_item(current_user, locId, itemName):
     if not Location.query.filter_by(id=locId).first():
