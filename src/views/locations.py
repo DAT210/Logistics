@@ -123,6 +123,8 @@ def delete_location(current_user, locId):
     if not get_location:
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
     else:
+        for ingredient in get_location.ingredients:
+            db.session.delete(ingredient)
         db.session.delete(get_location)
         db.session.commit()
         return jsonify({'code' : '204', 'message' : 'No Content', 'description' : 'An location has successfully been deleted'}), 204

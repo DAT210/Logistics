@@ -8,7 +8,7 @@ from .views import ingredients, locations
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     # Change the login to use enviroment variables for db and secret key
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/database.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/developDB.db'
     app.config['SECRET_KEY'] = os.getenv('INV_SECRET_KEY', 'dev')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
