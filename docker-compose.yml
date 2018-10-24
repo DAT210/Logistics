@@ -18,5 +18,19 @@ services:
       - "5000:5000"
     networks:
       - webnet
+
+  #builds and starts mysql image from database folder
+  mysql:  
+    build: 
+      context: ./src/database
+      dockerfile: dockerfile
+    container_name: mysql
+  # Sets up variables 
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: inventory
+      MYSQL_USER: inventory
+      MYSQL_PASSWORD: pass
+
 networks:
   webnet:
