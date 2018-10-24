@@ -10,9 +10,7 @@ class TestFlaskApi(unittest.TestCase):
 
     def setUp(self):
         create_db()
-        app = create_app()
-        app.config['TESTING'] = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/testDB'
+        app = create_app('test')
         self.app = app.test_client()
         token = self.app.get('v1/locations/login', headers={'Authorization' : 'Basic {}'.format(base64.b64encode(b'admin:password').decode('utf8'))})
         self.headers = {'Authorization': json.loads(token.data)['token']}
