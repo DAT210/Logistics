@@ -5,7 +5,7 @@ db = SQLAlchemy()
 class Location(db.Model):
     __tablename__ = "locations"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
+    name = db.Column(db.String(60))
     ingredients = db.relationship('Ingredient', backref='ingredients', lazy=True)
 
 class Ingredient(db.Model):

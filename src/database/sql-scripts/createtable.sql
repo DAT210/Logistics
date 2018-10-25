@@ -1,14 +1,14 @@
-CREATE TABLE location (
+CREATE TABLE locations (
     id int NOT NULL,
     name    varchar(60),
     PRIMARY KEY (id)
 );
 
-CREATE TABLE ingredient (
+CREATE TABLE ingredients (
     id int NOT NULL,
     name    varchar(60),
     amount      int,
-    locationID int,
+    location_id int,
     PRIMARY KEY (id),
-    FOREIGN KEY (locationID) REFERENCES location(id)
+    FOREIGN KEY (location_id) REFERENCES locations(id)
 );

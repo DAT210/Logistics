@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint, current_app
 from flask_sqlalchemy import SQLAlchemy
 from ..models import db, Location
-import jwt, datetime
+import jwt, datetime, os
 from functools import wraps
 
 bp = Blueprint('locations', __name__, url_prefix='/v1/locations/')
@@ -27,8 +27,8 @@ def token_required(f):
         try:
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
             # This is a test, should be more secure when implementing it completely
-            if user['username'] == data['username']:
-                current_user = user
+            if os.environ.get('INV_JWT_USER') == data['username']:
+                current_user = data['username']
         except:
             return jsonify({'code' : '403', 'message' : 'Invalid', 'description' : 'Token is invalid'}), 403
         
@@ -138,7 +138,7 @@ def login():
         return jsonify({'code' : '401', 'message' : 'Unable to login', 'description' : 'Could not verify login'}), 401
 
     # Check username and password against the temporary user. Need to check with the employee database
-    if auth.password == user['password'] and auth.username == user['username']:
+    if auth.password == os.environ.get('INV_JWT_PASS') and auth.username == os.environ.get('INV_JWT_USER'):
         token = jwt.encode({'username' : user['username'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, current_app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token' : token.decode('UTF-8')})
     return jsonify({'code' : '401', 'message' : 'Unable to login', 'description' : 'Could not verify login'}), 401

@@ -34,12 +34,12 @@ def get_amount_of_ingredient(current_user, locId, ingredientName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 
-    get_ingredient = Ingredient.query.filter_by(location_id = locId, name = ingredientName).first()
+    get_ingredient = Ingredient.query.filter_by(location_id = locId, name = ingredientName.capitalize()).first()
 
     if not get_ingredient:
         return jsonify({'code' : '404', 'message' : 'ingredient not in inventory', 'description' : 'This ingredient is not located in this inventory'}), 404
 
-    return jsonify({'amount' : get_ingredient.amount}), 200
+    return jsonify({'amount' : get_ingredient.amount, 'name' : get_ingredient.name}), 200
 
 
 # Route to update a ingredient by adding or subtracting the amount
@@ -67,7 +67,7 @@ def update_ingredient_amount(current_user, locId, ingredientName):
     if not isinstance(data['ingredientAmount'], int):
         return jsonify({'code' : '400', 'message' : 'Bad input', 'description' : 'Amount needs to be an integer'}), 400
 
-    get_ingredient = Ingredient.query.filter_by(location_id = locId, name = ingredientName).first()
+    get_ingredient = Ingredient.query.filter_by(location_id = locId, name = ingredientName.capitalize()).first()
     # Check if the ingredient exists in the inventory
     if not get_ingredient:
         return jsonify({'code' : '404', 'message' : 'ingredient not in inventory', 'description' : 'This ingredient is not located in this inventory'}), 404
@@ -120,7 +120,7 @@ def create_new_ingredient(current_user, locId):
             return jsonify({'code' : '304', 'message' : 'New ingredient not created', 'description' : 'The requested ingredient is already in the database'}), 304
 
 
-    new_ingredient = Ingredient(name=data['ingredientName'], amount=data['ingredientAmount'], location_id = locId)
+    new_ingredient = Ingredient(name=data['ingredientName'].capitalize(), amount=data['ingredientAmount'], location_id = locId)
     db.session.add(new_ingredient)
     db.session.commit()
     return jsonify({'code' : '201', 'message' : 'New ingredient created', 'description' : 'An ingredient has successfully been created'}), 201
@@ -133,7 +133,7 @@ def delete_ingredient(current_user, locId, ingredientName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 
-    get_ingredient = Ingredient.query.filter_by(location_id = locId, name = ingredientName).first()
+    get_ingredient = Ingredient.query.filter_by(location_id = locId, name = ingredientName.capitalize()).first()
 
     if not get_ingredient:
         return jsonify({'code' : '404', 'message' : 'ingredient not in inventory', 'description' : 'This ingredient is not located in this inventory'}), 404
