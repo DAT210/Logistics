@@ -1,14 +1,14 @@
-CREATE TABLE locations (
-    idlocations int NOT NULL,
-    sitename    varchar(60),
-    PRIMARY KEY (idlocations)
+CREATE TABLE location (
+    id int NOT NULL,
+    name    varchar(60),
+    PRIMARY KEY (id)
 );
 
-CREATE TABLE inventory (
-    idinventory int NOT NULL,
-    itemName    varchar(60),
+CREATE TABLE ingredient (
+    id int NOT NULL,
+    name    varchar(60),
     amount      int,
-    idlocations int,
-    PRIMARY KEY (idinventory),
-    FOREIGN KEY (idlocations) REFERENCES locations(idlocations)
+    locationID int,
+    PRIMARY KEY (id),
+    FOREIGN KEY (locationID) REFERENCES location(id)
 );

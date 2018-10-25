@@ -31,6 +31,7 @@ services:
       MYSQL_DATABASE: inventory
       MYSQL_USER: inventory
       MYSQL_PASSWORD: pass
-
+    ports: 
+      - "3306:3306"
 networks:
   webnet:
