@@ -4,6 +4,9 @@ from .models import db
 from flask import Flask
 from .views import ingredients, locations
 import pymysql
+from dotenv import load_dotenv
+
+load_dotenv("../.env")
 
 # Creates the flask application
 def create_app(env):
@@ -21,16 +24,16 @@ def create_app(env):
     
     elif env == 'prod':
         # Checks if essential enviroment variables are set
-        SECRET_KEY = os.environ.get('INV_SECRET_KEY', default=None)
+        SECRET_KEY = os.environ.get('SECRET_KEY', default=None)
         if not SECRET_KEY:
             raise ValueError('No secret key set, check enviroment variable in os')
-        db_username = os.environ.get('INV_DB_USERNAME', default=None)
+        db_username = os.environ.get('DB_USERNAME', default=None)
         if not db_username:
             raise ValueError('No username detected for database, check enviroment variable in os')
-        db_pass = os.environ.get('INV_DB_PASS', default=None)
+        db_pass = os.environ.get('DB_PASS', default=None)
         if not db_pass:
             raise ValueError('No password detected for database, check enviroment variable in os')
-        
+
         app.config['SECRET_KEY'] = SECRET_KEY
         app.config['DEBUG'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + db_pass + '@192.168.99.100:3501/inventory'

@@ -23,11 +23,11 @@ services:
     links:
       - mysql:mysql
     environment: 
-      INV_SECRET_KEY: ${INV_SECRET_KEY}
-      INV_DB_USERNAME: ${INV_DB_USERNAME}
-      INV_DB_PASS: ${INV_DB_PASS}
-      INV_JWT_USER: ${INV_JWT_USER}
-      INV_JWT_PASS: ${INV_JWT_PASS}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASS: ${DB_PASS}
+      JWT_USER: ${JWT_USER}
+      JWT_PASS: ${JWT_PASS}
 
   #builds and starts mysql image from database folder
   mysql:  
@@ -37,10 +37,10 @@ services:
     container_name: mysql
   # Sets up variables 
     environment:
-      MYSQL_ROOT_PASSWORD: ${INV_ROOT_PASS}
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
       MYSQL_DATABASE: inventory
-      MYSQL_USER: ${INV_DB_USERNAME}
-      MYSQL_PASSWORD: ${INV_DB_PASS}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASS}
     ports: 
       - "3501:3306"
 networks:
