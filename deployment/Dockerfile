@@ -47,7 +47,7 @@ RUN chgrp -R 0 /var/log /var/cache /run/pid /spool/nginx /var/run /run /tmp /etc
 
 RUN apt-get install -y dos2unix
 
-#RUN dos2unix /usr/local/bin/*.sh
+RUN dos2unix /usr/local/bin/*.sh
 
 # enter
 WORKDIR ${HOME}
