@@ -24,6 +24,10 @@ services:
       - mysql:mysql
     environment: 
       INV_SECRET_KEY: ${INV_SECRET_KEY}
+      INV_DB_USERNAME: ${INV_DB_USERNAME}
+      INV_DB_PASS: ${INV_DB_PASS}
+      INV_JWT_USER: ${INV_JWT_USER}
+      INV_JWT_PASS: ${INV_JWT_PASS}
 
   #builds and starts mysql image from database folder
   mysql:  
@@ -38,6 +42,6 @@ services:
       MYSQL_USER: ${INV_DB_USERNAME}
       MYSQL_PASSWORD: ${INV_DB_PASS}
     ports: 
-      - "3306:3306"
+      - "3501:3306"
 networks:
   webnet:

@@ -7,12 +7,6 @@ from functools import wraps
 bp = Blueprint('locations', __name__, url_prefix='/v1/locations/')
 
 
-# Temporary user to test jwt token authentication.
-user = {
-        'username' : 'admin',
-        'password' : 'password'
-}
-
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -139,6 +133,6 @@ def login():
 
     # Check username and password against the temporary user. Need to check with the employee database
     if auth.password == os.environ.get('INV_JWT_PASS') and auth.username == os.environ.get('INV_JWT_USER'):
-        token = jwt.encode({'username' : user['username'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, current_app.config['SECRET_KEY'], algorithm='HS256')
+        token = jwt.encode({'username' : os.environ.get('INV_JWT_USER'), 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, current_app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token' : token.decode('UTF-8')})
     return jsonify({'code' : '401', 'message' : 'Unable to login', 'description' : 'Could not verify login'}), 401

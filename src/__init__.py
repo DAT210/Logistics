@@ -8,8 +8,6 @@ import pymysql
 # Creates the flask application
 def create_app(env):
     app = Flask(__name__, instance_relative_config=True)
-    # Change the login to use enviroment variables for db and secret key
-    
     if env == 'dev':
         app.config['DEVELOPMENT'] = True
         app.config['DEBUG'] = True
@@ -22,7 +20,7 @@ def create_app(env):
         app.config['SECRET_KEY'] = 'testing'
     
     elif env == 'prod':
-        print(os.environ.get('INV_DB_USERNAME'), os.environ.get('INV_SECRET_KEY'), os.environ.get('INV_DB_PASS'))
+        # Checks if essential enviroment variables are set
         SECRET_KEY = os.environ.get('INV_SECRET_KEY', default=None)
         if not SECRET_KEY:
             raise ValueError('No secret key set, check enviroment variable in os')
@@ -35,7 +33,7 @@ def create_app(env):
         
         app.config['SECRET_KEY'] = SECRET_KEY
         app.config['DEBUG'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_pass + ':' + db_pass + '@192.168.99.100/inventory'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + db_pass + '@192.168.99.100:3501/inventory'
     
     else:
         raise ValueError('No valid enviroment input')

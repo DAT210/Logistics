@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from ..models import db, Ingredient, Location
-from .locations import user, token_required
+from .locations import token_required
 
 bp = Blueprint('ingredients', __name__, url_prefix='/v1/locations/')
 
