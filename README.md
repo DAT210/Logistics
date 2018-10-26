@@ -14,6 +14,7 @@ git clone https://github.com/DAT210/Logistics
 
 This will clone the project into your computer.
 
+### Initial configuration
 
 ```shell
 PYTHON setup.py
@@ -21,12 +22,24 @@ PYTHON setup.py
 
 Use python shell and run this command in the tools folder to create the SSL certification.
 
-
 ```shell
-TEMP: ADD info about enviroment variables
+Create .env file in root and add:
+  DB_USERNAME=<username>
+  DB_PASS=<password>
+  ROOT_PASS=<password>
+  SECRET_KEY=<secret>
 ```
 
-This will clone the project into your computer.
+This will create a .env file which docker and the program will read from, replace the brackets with the username you want to login with to the database, the corresponding password to the user, the root password for the database and last the secret key which you can use any string, reccomended to create a random string.
+
+### !!! Currenly you need to add these lines into the .env file !!!
+
+```shell
+JWT_USER=<username>
+JWT_PASS=<password>
+```
+
+This will create a login profile to use JWT.
 
 ## Developing
 
@@ -70,6 +83,10 @@ install the prerequisites
 create .env file and add:
   INV_JWT_USER=<username>
   INV_JWT_PASS=<password>
+  DB_USERNAME=<username>
+  DB_PASS=<password>
+  ROOT_PASS=<password>
+  SECRET_KEY=<secret>
 PYTHON runDev.py
 ```
 
