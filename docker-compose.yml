@@ -1,10 +1,6 @@
 version: "3"
 services:
   web:
-    # replace username/repo:tag with your name and image details
-    
-    #image: pythontest
-    #Building image from Dockerfile not prebuilt image
     build: .
     deploy:
       replicas: 1
@@ -16,12 +12,10 @@ services:
         condition: on-failure
     ports:
       - "5501:5000"
-    networks:
-      - webnet
     depends_on:
       - mysql
     links:
-      - mysql:mysql
+      - mysql
     environment: 
       SECRET_KEY: ${SECRET_KEY}
       DB_USERNAME: ${DB_USERNAME}
@@ -43,5 +37,3 @@ services:
       MYSQL_PASSWORD: ${DB_PASS}
     ports: 
       - "3501:3306"
-networks:
-  webnet:

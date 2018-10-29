@@ -36,7 +36,7 @@ def create_app(env):
 
         app.config['SECRET_KEY'] = SECRET_KEY
         app.config['DEBUG'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + db_pass + '@192.168.99.100:3501/inventory'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + db_pass + '@mysql/inventory'
     
     else:
         raise ValueError('No valid enviroment input')
