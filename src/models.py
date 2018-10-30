@@ -3,14 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class Location(db.Model):
-    __tablename__ = "location"
+    __tablename__ = "locations"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    items = db.relationship('Item', backref='item', lazy=True)
+    name = db.Column(db.String(60))
+    ingredients = db.relationship('Ingredient', backref='ingredients', lazy=True)
 
-class Item(db.Model):
-    __tablename__ = "inventory"
+class Ingredient(db.Model):
+    __tablename__ = "ingredients"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     amount = db.Column(db.Integer)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)

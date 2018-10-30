@@ -1,10 +1,6 @@
 version: "3"
 services:
   web:
-    # replace username/repo:tag with your name and image details
-    
-    #image: pythontest
-    #Building image from Dockerfile not prebuilt image
     build: .
     deploy:
       replicas: 1
@@ -15,9 +11,17 @@ services:
       restart_policy:
         condition: on-failure
     ports:
-      - "5000:5000"
-    networks:
-      - webnet
+      - "5501:5000"
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    environment: 
+      SECRET_KEY: ${SECRET_KEY}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASS: ${DB_PASS}
+      JWT_USER: ${JWT_USER}
+      JWT_PASS: ${JWT_PASS}
 
   #builds and starts mysql image from database folder
   mysql:  
@@ -27,11 +31,9 @@ services:
     container_name: mysql
   # Sets up variables 
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
       MYSQL_DATABASE: inventory
-      MYSQL_USER: inventory
-      MYSQL_PASSWORD: pass
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASS}
     ports: 
-      - "3306:3306"
-networks:
-  webnet:
+      - "3501:3306"

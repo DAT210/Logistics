@@ -1,17 +1,13 @@
 from flask import Flask, request, jsonify, Blueprint, current_app
 from flask_sqlalchemy import SQLAlchemy
 from ..models import db, Location
-import jwt, datetime
+import jwt, datetime, os
 from functools import wraps
+from dotenv import load_dotenv
+
 
 bp = Blueprint('locations', __name__, url_prefix='/v1/locations/')
 
-
-# Temporary user to test jwt token authentication.
-user = {
-        'username' : 'admin',
-        'password' : 'password'
-}
 
 def token_required(f):
     @wraps(f)
@@ -27,8 +23,8 @@ def token_required(f):
         try:
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
             # This is a test, should be more secure when implementing it completely
-            if user['username'] == data['username']:
-                current_user = user
+            if os.environ.get('JWT_USER') == data['username']:
+                current_user = data['username']
         except:
             return jsonify({'code' : '403', 'message' : 'Invalid', 'description' : 'Token is invalid'}), 403
         
@@ -123,6 +119,8 @@ def delete_location(current_user, locId):
     if not get_location:
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
     else:
+        for ingredient in get_location.ingredients:
+            db.session.delete(ingredient)
         db.session.delete(get_location)
         db.session.commit()
         return jsonify({'code' : '204', 'message' : 'No Content', 'description' : 'An location has successfully been deleted'}), 204
@@ -136,7 +134,7 @@ def login():
         return jsonify({'code' : '401', 'message' : 'Unable to login', 'description' : 'Could not verify login'}), 401
 
     # Check username and password against the temporary user. Need to check with the employee database
-    if auth.password == user['password'] and auth.username == user['username']:
-        token = jwt.encode({'username' : user['username'], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, current_app.config['SECRET_KEY'], algorithm='HS256')
+    if auth.password == os.environ.get('JWT_PASS') and auth.username == os.environ.get('JWT_USER'):
+        token = jwt.encode({'username' : os.environ.get('JWT_USER'), 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, current_app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token' : token.decode('UTF-8')})
     return jsonify({'code' : '401', 'message' : 'Unable to login', 'description' : 'Could not verify login'}), 401
