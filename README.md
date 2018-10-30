@@ -1,4 +1,4 @@
-![Logo of the project](./images/logo.sample.png)
+![Logo of the project](https://github.com/DAT210/conventions/blob/master/images/modules.png)
 
 # Logistics &middot; [![Build Status](https://img.shields.io/travis/npm/npm/latest.svg?style=flat-square)](https://travis-ci.org/npm/npm) [![npm](https://img.shields.io/npm/v/npm.svg?style=flat-square)](https://www.npmjs.com/package/npm) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
 
@@ -17,13 +17,13 @@ This will clone the project into your computer.
 ### Initial configuration
 
 ```shell
-PYTHON setup.py
+Run setup.py
 ```
 
-Use python shell and run this command in the tools folder to create the SSL certification.
+Use python shell and run the setup script located in the tools folder to create the SSL certification.
 
 ```shell
-Create .env file in root and add:
+Create .env file in the root of the project and add:
   DB_USERNAME=<username>
   DB_PASS=<password>
   ROOT_PASS=<password>
@@ -41,7 +41,7 @@ JWT_PASS=<password>
 
 This will create a login profile to use JWT.
 
-Use 192.168.99.100:5501 to access the API with Docker-Toolbox. Not tested with normal docker.
+To connect to the API, use https://192.168.99.100:5501/ for docker toolbox or https://127.0.0.1:5501/ for docker
 
 ## Developing
 
@@ -132,6 +132,7 @@ RECIEVE {
 ```shell
 GET     /v1/locations/
 SEND    
+CODE    200
 RECIEVE {
         "locations": [
         {
@@ -147,7 +148,8 @@ RECIEVE {
 
 ```shell
 GET     /v1/locations/<id>/ingredients
-SEND    
+SEND
+CODE    200
 RECIEVE {
         "ingredients": [
         {
@@ -166,6 +168,7 @@ RECIEVE {
 ```shell
 GET     /v1/locations/<id>
 SEND    
+CODE    200
 RECIEVE {
           "id": <id>,
           "name": <name>
@@ -175,6 +178,7 @@ RECIEVE {
 ```shell
 GET     /v1/locations/<id>/ingredients/<name>
 SEND    
+CODE    200
 RECIEVE {
           "amount": <amount>,
           "name": <name>
@@ -189,7 +193,7 @@ SEND    {
           "locationName": <name>
 }
 RECIEVE {
-          "code": <code>,
+          "code": 201,
           "message": <message>,
           "description": <description>
 }
@@ -202,7 +206,7 @@ SEND    {
           "ingredientAmount": <amount>
 }  
 RECIEVE {
-          "code": <code>,
+          "code": 201,
           "message": <message>,
           "description": <description>
 }
@@ -216,7 +220,7 @@ SEND    {
           "locationName": <name>
 }
 RECIEVE {
-          "code": <code>,
+          "code": 204,
           "message": <message>,
           "description": <description>
 }
@@ -228,7 +232,7 @@ SEND    {
           "ingredientAmount": <amount>
 }  
 RECIEVE {
-          "code": <code>,
+          "code": 204,
           "message": <message>,
           "description": <description>
 }
@@ -240,7 +244,7 @@ RECIEVE {
 DELETE     /v1/locations/<id>
 SEND    
 RECIEVE {
-          "code": <code>,
+          "code": 204,
           "message": <message>,
           "description": <description>
 }
@@ -250,7 +254,7 @@ RECIEVE {
 DELETE     /v1/locations/<id>/ingredients/<name>
 SEND    
 RECIEVE {
-          "code": <code>,
+          "code": 204,
           "message": <message>,
           "description": <description>
 }
