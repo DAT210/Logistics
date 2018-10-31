@@ -41,7 +41,7 @@ JWT_PASS=<password>
 
 This will create a login profile to use JWT.
 
-To connect to the API, use https://192.168.99.100:5501/ for docker toolbox or https://127.0.0.1:5501/ for docker
+To connect to the API, use https://192.168.99.100:25101/ for docker toolbox or https://127.0.0.1:25101/ for docker
 
 ## Developing
 

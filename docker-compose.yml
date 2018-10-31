@@ -11,7 +11,7 @@ services:
       restart_policy:
         condition: on-failure
     ports:
-      - "5501:5000"
+      - "25101:5000"
     depends_on:
       - mysql
     links:
@@ -36,4 +36,4 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASS}
     ports: 
-      - "3501:3306"
+      - "25102:3306"

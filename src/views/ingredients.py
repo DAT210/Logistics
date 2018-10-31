@@ -78,7 +78,8 @@ def update_ingredient_amount(current_user, locId, ingredientName):
     elif data['action'] == 'subtract':
         amount = get_ingredient.amount - data['ingredientAmount']
         if amount < 0:
-            amount = 0
+            return jsonify({'code' : '400', 'message' : 'Not enough of ingredients', 
+        'description' : 'Trying to reduce the amount of an ingredient causes the amount to become negative'}), 400 
         get_ingredient.amount = amount
     
     else:
