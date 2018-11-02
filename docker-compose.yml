@@ -1,0 +1,39 @@
+version: "3"
+services:
+  web:
+    build: .
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "25101:5000"
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    environment: 
+      SECRET_KEY: ${SECRET_KEY}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASS: ${DB_PASS}
+      JWT_USER: ${JWT_USER}
+      JWT_PASS: ${JWT_PASS}
+
+  #builds and starts mysql image from database folder
+  mysql:  
+    build: 
+      context: ./src/database
+      dockerfile: dockerfile
+    container_name: mysql
+  # Sets up variables 
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
+      MYSQL_DATABASE: inventory
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASS}
+    ports: 
+      - "25102:3306"
