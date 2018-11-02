@@ -22,6 +22,7 @@ services:
       DB_PASS: ${DB_PASS}
       JWT_USER: ${JWT_USER}
       JWT_PASS: ${JWT_PASS}
+      AUTO_REFILL: ${AUTO_REFILL}
 
   #builds and starts mysql image from database folder
   mysql:  

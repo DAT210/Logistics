@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from ..models import db, Ingredient, Location
 from .locations import token_required
+import os
 
 bp = Blueprint('ingredients', __name__, url_prefix='/v1/locations/')
 
@@ -77,8 +78,16 @@ def update_ingredient_amount(current_user, locId, ingredientName):
 
     elif data['action'] == 'subtract':
         amount = get_ingredient.amount - data['ingredientAmount']
-        if amount < 0:
-            return jsonify({'code' : '400', 'message' : 'Not enough of ingredients', 
+        if amount <= 5:
+            # Refills the specified item, but still sends 
+            if os.environ.get('AUTO_REFILL'):
+                get_ingredient.amount = get_ingredient.amount + 50
+                db.session.commit()
+                return jsonify({'code' : '400', 'message' : 'Not enough of ingredients, refills', 
+        'description' : 'Trying to reduce the amount of an ingredient causes the amount to become negative, but it is refilling the storage'}), 400 
+
+            else:
+                return jsonify({'code' : '400', 'message' : 'Not enough of ingredients', 
         'description' : 'Trying to reduce the amount of an ingredient causes the amount to become negative'}), 400 
         get_ingredient.amount = amount
     
