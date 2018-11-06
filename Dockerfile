@@ -1,11 +1,11 @@
-FROM python:3
+FROM tiangolo/uwsgi-nginx-flask:flask
 
-WORKDIR /usr/
+# If you're going to need to troubleshoot with vim
+# RUN apt-get -y update && apt-get -y install vim
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# ADD requirements.txt /tmp/requirements.txt 
 
-COPY . .
-EXPOSE 5000
+# RUN pip install -r /tmp/requirements.txt 
 
-CMD [ "python", "run.py" ]
+# Assuming you're in the directory
+COPY . /app
