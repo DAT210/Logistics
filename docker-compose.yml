@@ -1,6 +1,6 @@
-version: "3"
+version: '3.5'
 services:
-  web:
+  logistics_app:
     build: .
     deploy:
       replicas: 1
@@ -13,22 +13,24 @@ services:
     ports:
       - "25101:5000"
     depends_on:
-      - mysql
+      - logistics_mysql
     links:
-      - mysql
+      - logistics_mysql
     environment: 
       SECRET_KEY: ${SECRET_KEY}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASS: ${DB_PASS}
       JWT_USER: ${JWT_USER}
       JWT_PASS: ${JWT_PASS}
+    networks:
+      - frontend
 
   #builds and starts mysql image from database folder
-  mysql:  
+  logistics_mysql:  
     build: 
       context: ./src/database
       dockerfile: dockerfile
-    container_name: mysql
+    container_name: logistics_mysql
   # Sets up variables 
     environment:
       MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
@@ -37,3 +39,9 @@ services:
       MYSQL_PASSWORD: ${DB_PASS}
     ports: 
       - "25102:3306"
+    networks:
+      - frontend
+
+networks: 
+  frontend:
+    name: frontend

@@ -2,9 +2,10 @@ import sys, os
 sys.path.append('../')
 from .models import db
 from flask import Flask
-from .views import ingredients, locations
+from .views import ingredients, locations, web
 import pymysql
 from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager
 
 load_dotenv("../.env")
 
@@ -36,7 +37,7 @@ def create_app(env):
 
         app.config['SECRET_KEY'] = SECRET_KEY
         app.config['DEBUG'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + db_pass + '@mysql/inventory'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + db_pass + '@logistics_mysql/inventory'
     
     else:
         raise ValueError('No valid enviroment input')
@@ -45,7 +46,11 @@ def create_app(env):
 
     db.init_app(app)
 
+    app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET_KEY', default="testing")
+    jwt = JWTManager(app)
+
     app.register_blueprint(ingredients.bp)
     app.register_blueprint(locations.bp)
+    app.register_blueprint(web.bp)
 
     return app
