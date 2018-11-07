@@ -103,12 +103,11 @@ def delete_location(locId):
 
 
 # Route to login and create a jwt token
-@bp.route('/login')
+@bp.route('/login', methods=["GET", "POST"])
 def login():
     auth = request.authorization
     if not auth or not auth.username or not auth.password:
         return jsonify({'code' : '401', 'message' : 'Unable to login', 'description' : 'Could not verify login'}), 401
-
     # Check username and password against the temporary user. Need to check with the employee database
     if auth.password == os.environ.get('JWT_PASS') and auth.username == os.environ.get('JWT_USER'):
         access_token = create_access_token(identity=auth.username)

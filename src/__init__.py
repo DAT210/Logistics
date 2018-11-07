@@ -45,8 +45,6 @@ def create_app(env):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-
-    app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET_KEY', default="testing")
     jwt = JWTManager(app)
 
     app.register_blueprint(ingredients.bp)

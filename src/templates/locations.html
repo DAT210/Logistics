@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Locations!</title>
+    <title>Locations</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -18,9 +18,10 @@
         </div>
           <div class="col-4">
             <div class="list-group" id="list-tab" role="tablist">
-                <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#newloc" aria-expanded="false" aria-controls="newloc"> New Location </button>
+
+              <!-- Button and hidden form to create a new location -->
+                <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#newloc" aria-expanded="false" aria-controls="newloc"> New Location </button>
                 <div class="collapse" id="newloc">
-                  
                   <form id="newLocForm" action="" method="POST">
                     <div class="form-group">
                       <label for="newLocationName">Location Name</label>
@@ -28,13 +29,45 @@
                     </div>
                     <button type="button" class="btn btn-secondary" name="submit" value="submit" id="newSubmit">Submit</button>
                   </form>
-
                 </div>
+              <!-- Button and hidden form to update a location -->
+                <button class="btn btn-warning" type="button" data-toggle="collapse" data-target="#updateLoc" aria-expanded="false" aria-controls="updateLoc"> Update Location </button>
+                <div class="collapse" id="updateLoc">
+                      
+                  <form id="updateLocForm" action="" method="PUT">
+                      <div class="form-group">
+                        <label for="updateLocationName">Location Name</label>
+                        <input type="text" class="form-control" id="updateLocationName">
+                      </div>
+                      <div class="form-group">
+                          <label for="updateLocationID">Location ID</label>
+                          <input type="text" class="form-control" id="updateLocationID">
+                        </div>
+                      <button type="button" class="btn btn-secondary" name="submit" value="submit" id="updateSubmit">Submit</button>
+                  </form>
+                </div>
+
+              <!-- Button and hidden form to delete a location -->
+              <button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#deleteLoc" aria-expanded="false" aria-controls="deleteLoc"> Delete Location </button>
+              <div class="collapse" id="deleteLoc">
+                    
+                <form id="deleteLocForm" action="" method="DELETE">
+                    <div class="form-group">
+                        <label for="deleteLocationID">Location ID</label>
+                        <input type="text" class="form-control" id="deleteLocationID">
+                      </div>
+                    <button type="button" class="btn btn-secondary" name="submit" value="submit" id="deleteSubmit">Submit</button>
+                </form>
+              </div>
+
+              <!-- Lists all the locations and makes them clickable to see more info -->
                 {% for location in locations %}
-                  <a class="list-group-item list-group-item-action" id="list-{{location.id}}-list" data-toggle="list" href="#list-{{location.id}}" role="tab" aria-controls="home">{{location.name}}</a>
+                  <a class="list-group-item list-group-item-action" href="{{location.id}}">ID:{{location.id}} {{location.name}}</a>
                 {% endfor %}
             </div>
           </div>
+
+          <!-- Information and configuration
           <div class="col-4">
             <div class="tab-content" id="nav-tabContent">
               {% for location in locations %}
@@ -44,35 +77,100 @@
               {% endfor %}
               </div>
           </div>
-        </div>
+          -->
+      </div>
     
 
         <script>
           $(document).ready(function () {
 
-            $('#newSubmit').on('click', function(event) {
-              event.preventDefault();
-              var data = {locationName : $("#newLocationName").val()};
-              var dataJson = JSON.stringify(data)
-              
-              $.ajax({
-                dataJson,
-                dataType : "json",
-                type : 'POST',
-                url : '/v1/locations/',
-                success : function(result) {
-                  console.log(result);
-                }
-              })
-              .done(function(data) {
-                if (data.code) {
+            // Create a new Location
+            $('#newSubmit').on("click", function(event){
 
-                } else {
-                  $('#successAlert').text("Created new location!").show()
-                }
+              var name = $('#newLocationName').val();
+              console.log(name);
+
+                // Send request via AJAX
+                $.ajax({
+                    type: "POST",
+                    url: "/v1/locations/",
+                    headers: {
+                        "Authorization": "Bearer " + sessionStorage.getItem("access_token")
+                    },
+                    contentType: "application/json",
+                    data: JSON.stringify({"locationName": name}),
+                    error: function(xhr, status, error) {
+                      console.log(xhr.responseText)
+                    },
+                    success: function(data) {
+                    location.reload()
+                  },
+                  statusCode: {
+                    401: function() {
+                      window.location.href = "/locations/login"
+                    }
+                  }
+                })
+            }); 
+
+            // Update a location
+            $('#updateSubmit').on("click", function(event){
+
+              var name = $('#updateLocationName').val();
+              var id = $('#updateLocationID').val();
+              console.log(name, id);
+
+              //Send request via AJAX
+              $.ajax({
+                  type: "PUT",
+                  url: "/v1/locations/" + id,
+                  headers: {
+                      "Authorization": "Bearer " + sessionStorage.getItem("access_token")
+                  },
+                  contentType: "application/json",
+                  data: JSON.stringify({"locationName": name}),
+                  error: function(xhr, status, error) {
+                      console.log(xhr.responseText)
+                  },
+                  success: function(data) {
+                    location.reload()
+                  },
+                  statusCode: {
+                    401: function() {
+                      window.location.href = "/locations/login"
+                    }
+                  }
               })
             });
-          });
+
+            // Delete a location
+            $('#deleteSubmit').on("click", function(event){
+
+              var id = $('#deleteLocationID').val();
+              console.log(id);
+
+              //Send request via AJAX
+              $.ajax({
+                  type: "DELETE",
+                  url: "/v1/locations/" + id,
+                  headers: {
+                      "Authorization": "Bearer " + sessionStorage.getItem("access_token")
+                  },
+                  contentType: "application/json",
+                  error: function(xhr, status, error) {
+                      console.log(xhr.responseText)
+                  },
+                  success: function(data) {
+                    location.reload()
+                  },
+                  statusCode: {
+                    401: function() {
+                      window.location.href = "/locations/login"
+                    }
+                  }
+                })
+            });
+        });
 
         </script>
   </body>

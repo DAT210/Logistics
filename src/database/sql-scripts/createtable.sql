@@ -1,11 +1,11 @@
 CREATE TABLE locations (
-    id int NOT NULL,
+    id int NOT NULL AUTO_INCREMENT,
     name    varchar(60),
     PRIMARY KEY (id)
 );
 
 CREATE TABLE ingredients (
-    id int NOT NULL,
+    id int NOT NULL AUTO_INCREMENT,
     name    varchar(60),
     amount      int,
     location_id int,

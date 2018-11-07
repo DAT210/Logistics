@@ -3,19 +3,185 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Ingredients</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <title>Ingredients!</title>
-  </head>
-  <body>
-      <ul class="list-group">
-      {% for ingredient in ingredients %}
-      <li class="list-group-item">{{ingredient.name}}   {{ingredient.amount}}</li>
-      {% endfor %}
-    </ul>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <meta name="locId" content="{{location.id}}">
+  </head>
+  <body>
+    <div class="col-12">
+      <h1>Showing ingredients for {{location.name}}</h1>
+    </div>
+    <div class="col-6">
+      <ul class="list-group">
+        {% for ingredient in ingredients %}
+        <li class="list-group-item">{{ingredient.name}}   {{ingredient.amount}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-6">
+        <!-- Button and hidden form to create a new ingredient -->
+        <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#newing" aria-expanded="false" aria-controls="newing"> New Ingredient </button>
+        <button class="btn btn-warning" type="button" data-toggle="collapse" data-target="#updateIng" aria-expanded="false" aria-controls="updateIng"> Update Ingredient </button>
+        <button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#deleteIng" aria-expanded="false" aria-controls="deleteIng"> Delete Ingredient </button>
+        <div class="collapse" id="newing">
+          <form id="newIngForm" action="" method="POST">
+            <div class="form-group">
+              <label for="newIngredientName">Ingredient Name</label>
+              <input type="text" class="form-control" id="newIngredientName">
+            </div>
+            <div class="form-group">
+                <label for="newIngredientAmount">Ingredient Amount</label>
+                <input type="text" class="form-control" id="newIngredientAmount">
+              </div>
+            <button type="button" class="btn btn-secondary" name="submit" value="submit" id="newSubmit">Submit</button>
+          </form>
+        </div>
+      <!-- Form to update a ingredient -->
+        <div class="collapse" id="updateIng">
+              
+          <form id="updateIngForm" action="" method="PUT">
+              <div class="form-group">
+                <label for="updateIngredientName">Ingredient Name</label>
+                <input type="text" class="form-control" id="updateIngredientName">
+              </div>
+              <div class="form-group">
+                  <label for="updateIngredientAmount">Ingredient Amount</label>
+                  <input type="text" class="form-control" id="updateIngredientAmount">
+              </div>
+              <div class="form-check">
+                  <input class="form-check-input" type="radio" name="math" id="add" value="add" checked>
+                  <label class="form-check-label" for="add">
+                    Add
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="math" id="subtract" value="subtract">
+                  <label class="form-check-label" for="subtract">
+                    Subtract
+                  </label>
+                </div>
+              <button type="button" class="btn btn-secondary" name="submit" value="submit" id="updateSubmit">Submit</button>
+          </form>
+        </div>
+
+      <!-- Form to delete a ingredient -->
+      <div class="collapse" id="deleteIng">
+            
+        <form id="deleteIngForm" action="" method="DELETE">
+            <div class="form-group">
+                <label for="deleteIngredient">Ingredient Name</label>
+                <input type="text" class="form-control" id="deleteIngredient">
+              </div>
+            <button type="button" class="btn btn-secondary" name="submit" value="submit" id="deleteSubmit">Submit</button>
+        </form>
+      </div>
+    </div>
+      
+
+    <script>
+        $(document).ready(function () {
+
+          // Create a new Ingredient
+          $('#newSubmit').on("click", function(event){
+
+            var name = $('#newIngredientName').val();
+            var amount = $('#newIngredientAmount').val();
+            var locId = $('meta[name=locId]').attr("content");
+            console.log(name, amount, locId);
+
+              // Send request via AJAX
+              $.ajax({
+                  type: "POST",
+                  url: "/v1/locations/" + locId + "/ingredients",
+                  headers: {
+                      "Authorization": "Bearer " + sessionStorage.getItem("access_token")
+                  },
+                  contentType: "application/json",
+                  data: JSON.stringify({"ingredientName": name, "ingredientAmount" : parseInt(amount)}),
+                  error: function(xhr, status, error) {
+                    console.log(xhr.responseText)
+                  },
+                  success: function(data) {
+                    location.reload()
+                },
+                statusCode: {
+                  401: function() {
+                    window.location.href = "/locations/login"
+                  }
+                }
+              })
+          }); 
+
+          // Update a Ingredient
+          $('#updateSubmit').on("click", function(event){
+
+            var name = $('#updateIngredientName').val();
+            var amount = $('#updateIngredientAmount').val();
+            var operation = $('#updateIngForm input[name=math]:checked').val();
+            var locId = $('meta[name=locId]').attr("content");
+            console.log(name, operation, locId);
+
+            //Send request via AJAX
+            $.ajax({
+                type: "PUT",
+                url: "/v1/locations/" + locId + "/ingredients/" + name,
+                headers: {
+                    "Authorization": "Bearer " + sessionStorage.getItem("access_token")
+                },
+                contentType: "application/json",
+                data: JSON.stringify({"ingredientAmount": parseInt(amount), "action": operation}),
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText)
+                },
+                success: function(data) {
+                  location.reload()
+                },
+                statusCode: {
+                  401: function() {
+                    window.location.href = "/locations/login"
+                  }
+                }
+            })
+          });
+
+          // Delete a Ingredient
+          $('#deleteSubmit').on("click", function(event){
+
+            var name = $('#deleteIngredient').val();
+            var locId = $('meta[name=locId]').attr("content");
+            console.log(name, locId);
+
+            //Send request via AJAX
+            $.ajax({
+                type: "DELETE",
+                url: "/v1/locations/" + locId + "/ingredients/" + name,
+                headers: {
+                    "Authorization": "Bearer " + sessionStorage.getItem("access_token")
+                },
+                contentType: "application/json",
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText)
+                },
+                success: function(data) {
+                  location.reload()
+                },
+                statusCode: {
+                  401: function() {
+                    window.location.href = "/locations/login"
+                  }
+                }
+              })
+          });
+      });
+
+      </script>
+  
+  
+  
   </body>
 </html>

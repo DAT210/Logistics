@@ -13,7 +13,7 @@ class TestFlaskApi(unittest.TestCase):
         app = create_app('test')
         self.app = app.test_client()
         token = self.app.get('v1/locations/login', headers={'Authorization' : 'Basic {}'.format(base64.b64encode(b'admin:password').decode('utf8'))})
-        self.headers = {'Authorization': json.loads(token.data)['token']}
+        self.headers = {'Authorization': "Bearer " + json.loads(token.data)['access_token']}
 
     def tearDown(self):
         delete_db()
