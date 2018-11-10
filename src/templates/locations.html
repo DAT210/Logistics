@@ -13,10 +13,7 @@
   </head>
   <body>
       <div class="row">
-        <div class="col-12">
-          <div id="successAlert" class="alert alert-success alert-dismissible" role="alert" style="display:none;"></div>
-        </div>
-          <div class="col-4">
+          <div class="col-6">
             <div class="list-group" id="list-tab" role="tablist">
 
               <!-- Button and hidden form to create a new location -->
@@ -62,7 +59,7 @@
 
               <!-- Lists all the locations and makes them clickable to see more info -->
                 {% for location in locations %}
-                  <a class="list-group-item list-group-item-action" href="{{location.id}}">ID:{{location.id}} {{location.name}}</a>
+                  <a class="list-group-item list-group-item-action" href="{{location.id}}">ID:{{location.id}} {{location.name}}</a> 
                 {% endfor %}
             </div>
           </div>
@@ -170,6 +167,11 @@
                   }
                 })
             });
+
+            // $('[id^=test]').on("click", function(event){
+            //   console.log($(event.target).val());
+            // });
+
         });
 
         </script>

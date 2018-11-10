@@ -5,7 +5,7 @@ from flask import Flask
 from .views import ingredients, locations, web
 import pymysql
 from dotenv import load_dotenv
-from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 load_dotenv("../.env")
 
@@ -45,7 +45,7 @@ def create_app(env):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-    jwt = JWTManager(app)
+    CORS(app)
 
     app.register_blueprint(ingredients.bp)
     app.register_blueprint(locations.bp)

@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from ..models import db, Ingredient, Location
-from flask_jwt_extended import jwt_required
+from .locations import token_required
 
 bp = Blueprint('ingredients', __name__, url_prefix='/v1/locations/')
 
@@ -9,8 +9,8 @@ bp = Blueprint('ingredients', __name__, url_prefix='/v1/locations/')
 
 # Route to get every ingredient in the inventory of the specified location
 @bp.route('<int:locId>/ingredients', methods=['GET'])
-@jwt_required
-def get_all_ingredients(locId):
+@token_required
+def get_all_ingredients(current_user, locId):
     # Check if location exists in the database, this test is in every route
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
@@ -29,8 +29,8 @@ def get_all_ingredients(locId):
 
 # Route to get a specific ingredient in the inventory of a location
 @bp.route('<int:locId>/ingredients/<string:ingredientName>', methods=['GET'])
-@jwt_required
-def get_amount_of_ingredient(locId, ingredientName):
+@token_required
+def get_amount_of_ingredient(current_user, locId, ingredientName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 
@@ -44,8 +44,8 @@ def get_amount_of_ingredient(locId, ingredientName):
 
 # Route to update a ingredient by adding or subtracting the amount
 @bp.route('<int:locId>/ingredients/<string:ingredientName>', methods=['PUT'])
-@jwt_required
-def update_ingredient_amount(locId, ingredientName):
+@token_required
+def update_ingredient_amount(current_user, locId, ingredientName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
     
@@ -92,8 +92,8 @@ def update_ingredient_amount(locId, ingredientName):
 
 # Route to add new ingredient to the inventory
 @bp.route('<int:locId>/ingredients', methods=['POST'])
-@jwt_required
-def create_new_ingredient(locId):
+@token_required
+def create_new_ingredient(current_user, locId):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 
@@ -129,8 +129,8 @@ def create_new_ingredient(locId):
 
 # Route to delete a ingredient from the inventory
 @bp.route('<int:locId>/ingredients/<string:ingredientName>', methods=['DELETE'])
-@jwt_required
-def delete_ingredient(locId, ingredientName):
+@token_required
+def delete_ingredient(current_user, locId, ingredientName):
     if not Location.query.filter_by(id=locId).first():
         return jsonify({'code' : '404', 'message' : 'Location does not exist', 'description' : 'This location does not exist in the database'}), 404
 

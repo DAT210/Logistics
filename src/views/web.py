@@ -1,26 +1,32 @@
-from flask import Blueprint, current_app, render_template
+from flask import Blueprint, current_app, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from ..models import db, Location, Ingredient
-import requests, json, base64
+import requests, json
+from flask_jwt_extended import jwt_required
 bp = Blueprint('web', __name__, url_prefix="/locations")
 
 
 @bp.route("/", methods=['GET'])
 def locations():
-    headers = {'Authorization' : 'Basic {}'.format(base64.b64encode(b'admin:password').decode('utf8'))}
-    token = requests.get("https://logistics_app:5000/v1/locations/login", headers=headers, verify=False)
-    
-    response = requests.get("https://logistics_app:5000/v1/locations/", headers={'Authorization' : "Bearer " + token.json()['access_token']}, timeout=10, verify=False)
-    return render_template('locations.html', locations=response.json()['locations'])
+    token = request.cookies.get('access_token_cookie')
+    if token == None:
+        return redirect('/locations/login')
+    valid_token = requests.get("https://logistics_app:5000/v1/locations/auth", headers={'Authorization' : "Bearer " + token}, timeout=10, verify=False)
+    if valid_token.status_code == 200:
+        response = requests.get("https://logistics_app:5000/v1/locations/", headers={'Authorization' : "Bearer " + token}, timeout=10, verify=False)
+        return render_template('locations.html', locations=response.json()['locations'])
+    return redirect('/locations/login')
 
 @bp.route("/<int:locId>", methods=['GET'])
 def ingredients(locId):
-    headers = {'Authorization' : 'Basic {}'.format(base64.b64encode(b'admin:password').decode('utf8'))}
-    token = requests.get("https://logistics_app:5000/v1/locations/login", headers=headers, verify=False)
-    
-    response = requests.get("https://logistics_app:5000/v1/locations/" + str(locId) + "/ingredients", headers={'Authorization' : "Bearer " + token.json()['access_token']}, timeout=10, verify=False)
-    location = requests.get("https://logistics_app:5000/v1/locations/" + str(locId), headers={'Authorization' : "Bearer " + token.json()['access_token']}, timeout=10, verify=False)
-    return render_template('ingredients.html', ingredients=response.json()['ingredients'], location=location.json())
+    token = request.cookies.get('access_token_cookie')
+    if token == None:
+        return redirect('/locations/login')
+    valid_token = requests.get("https://logistics_app:5000/v1/locations/auth", headers={'Authorization' : "Bearer " + token}, timeout=10, verify=False)
+    if valid_token.status_code == 200:
+        response = requests.get("https://logistics_app:5000/v1/locations/" + str(locId) + "/ingredients", headers={'Authorization' : "Bearer " + token}, timeout=10, verify=False)
+        location = requests.get("https://logistics_app:5000/v1/locations/" + str(locId), headers={'Authorization' : "Bearer " + token}, timeout=10, verify=False)
+        return render_template('ingredients.html', ingredients=response.json()['ingredients'], location=location.json())
+    return redirect('/locations/login')
     
 @bp.route('/login', methods=['GET'])
 def login():
