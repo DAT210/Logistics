@@ -12,10 +12,6 @@ services:
         condition: on-failure
     ports:
       - "25101:5000"
-    depends_on:
-      - logistics_mysql
-    links:
-      - logistics_mysql
     environment: 
       SECRET_KEY: ${SECRET_KEY}
       DB_USERNAME: ${DB_USERNAME}

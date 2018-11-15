@@ -3,7 +3,7 @@ sys.path.append('../')
 from .models import db
 from flask import Flask
 from .views import ingredients, locations, web
-import pymysql
+import pymysql, urllib
 from dotenv import load_dotenv
 from flask_cors import CORS
 
@@ -22,7 +22,7 @@ def create_app(env):
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/testDB'
         app.config['SECRET_KEY'] = 'testing'
-    
+        
     elif env == 'prod':
         # Checks if essential enviroment variables are set
         SECRET_KEY = os.environ.get('SECRET_KEY', default=None)
@@ -37,18 +37,20 @@ def create_app(env):
 
         app.config['SECRET_KEY'] = SECRET_KEY
         app.config['DEBUG'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + db_pass + '@logistics_mysql/inventory'
-    
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + db_username + ':' + urllib.parse.quote_plus(db_pass) + '@dat210db.mysql.database.azure.com/logistics'
+        app.config['SQLALCHEMY_POOL_SIZE'] = 100
+        app.config['SQLALCHEMY_POOL_RECYCLE'] = 60
+
     else:
         raise ValueError('No valid enviroment input')
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    
     db.init_app(app)
     CORS(app)
-
     app.register_blueprint(ingredients.bp)
     app.register_blueprint(locations.bp)
-    app.register_blueprint(web.bp)
+    #app.register_blueprint(web.bp)
 
     return app
