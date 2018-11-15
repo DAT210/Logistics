@@ -6,8 +6,8 @@ from functools import wraps
 from dotenv import load_dotenv
 
 
-bp = Blueprint('locations', __name__, url_prefix='/v1/locations/')
 
+bp = Blueprint('locations', __name__, url_prefix='/v1/locations/')
 
 def token_required(f):
     @wraps(f)
@@ -15,7 +15,12 @@ def token_required(f):
         token = None
         
         if 'Authorization' in request.headers:
-            token = request.headers['Authorization']
+            auth_header = request.headers['Authorization']
+
+            try:
+                token = auth_header.split(" ")[1]
+            except IndexError:
+                return jsonify({'code' : '403', 'message' : 'failed', 'description' : 'Provide valid auth token'}), 403
 
         if not token:
             return jsonify({'code' : '403', 'message' : 'Missing token', 'description' : 'Token is missing'}), 403
@@ -31,12 +36,10 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
-
 # Route to get all locations
 @bp.route('', methods=['GET'])
 @token_required
 def get_all_locations(current_user):
-
     locations = Location.query.order_by(Location.id).all()
     output = []
 
@@ -127,7 +130,7 @@ def delete_location(current_user, locId):
 
 
 # Route to login and create a jwt token
-@bp.route('/login')
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     auth = request.authorization
     if not auth or not auth.username or not auth.password:
@@ -136,5 +139,29 @@ def login():
     # Check username and password against the temporary user. Need to check with the employee database
     if auth.password == os.environ.get('JWT_PASS') and auth.username == os.environ.get('JWT_USER'):
         token = jwt.encode({'username' : os.environ.get('JWT_USER'), 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, current_app.config['SECRET_KEY'], algorithm='HS256')
-        return jsonify({'token' : token.decode('UTF-8')})
+        return jsonify({'access_token' : token.decode('UTF-8')}), 200
     return jsonify({'code' : '401', 'message' : 'Unable to login', 'description' : 'Could not verify login'}), 401
+
+@bp.route('/auth', methods=['GET', 'POST'])
+def valid_token():
+    token = None
+    if 'Authorization' in request.headers:
+        auth_header = request.headers['Authorization']
+
+        try:
+            token = auth_header.split(" ")[1]
+        except IndexError:
+            return jsonify({'code' : '403', 'message' : 'failed', 'description' : 'Provide valid auth token'}), 403
+
+    if not token:
+        return jsonify({'code' : '403', 'message' : 'Missing token', 'description' : 'Token is missing'}), 403
+
+    try:
+        data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        # This is a test, should be more secure when implementing it completely
+        if os.environ.get('JWT_USER') == data['username']:
+                return jsonify({'code' : '200', 'message' : 'Valid', 'description' : 'Token is valid'}), 200
+    except:
+        return jsonify({'code' : '403', 'message' : 'Invalid', 'description' : 'Token is invalid'}), 403
+
+    
