@@ -1,131 +1,328 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!-- These are the three fonts used in the site, all are from google font leapsis-->
-<link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet"> <!-- used for menu line-->
-<link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet"><!-- used for h1,h2,h3 line-->
-<link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'><!-- used for logo-->
-
-<link rel="stylesheet" type="text/css" href="test1.css"> <!-- CSS file -->
-</head>
+<link rel="stylesheet" type="text/css" href="socialmedia.css">
 
 <style>
-#map{
-  height:400px;
-  width:600px;
-  margin-top: 3%;
-  margin-left: 30%;
-}
+  #map {
+    height: 500px;
+    width: 700px;
+  }
+
+  #description {
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+  }
+
+  #infowindow-content .title {
+    font-weight: bold;
+  }
+
+  #infowindow-content {
+    display: none;
+  }
+
+  #map #infowindow-content {
+    display: inline;
+  }
+
+  .pac-card {
+    margin: 10px 10px 0 0;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    font-family: Roboto;
+  }
+
+  #pac-container {
+    padding-bottom: 12px;
+    margin-right: 12px;
+  }
+
+  .pac-controls {
+    display: inline-block;
+    padding: 5px 11px;
+  }
+
+  .pac-controls label {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 300;
+  }
+
+  #pac-input {
+    background-color: #fff;
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+    margin-left: 12px;
+    padding: 0 11px 0 13px;
+    text-overflow: ellipsis;
+    width: 400px;
+  }
+
+  #pac-input:focus {
+    border-color: #4d90fe;
+  }
+
+  #title {
+    color: #fff;
+    background-color: #4d90fe;
+    font-size: 25px;
+    font-weight: 500;
+    padding: 6px 12px;
+  }
+  #target {
+    width: 345px;
+  }
 </style>
+</head>
 
 <body>
 
-<!-- this is the header portion-->
-  <div id="logo"> <!-- this is the logo-->
-      <h1>food</h1>
-  </div>
+  <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+  <nav id="map">
+  <script>
+    // This is a google maps representation of the three resturants that have opened
 
-<!-- This is the menu line to header portion-->
-  <div id= "menu" >
-    <ul>
-       <li class='active'><a href='#'><span>ABOUT US</span></a></li>
-       <li><a href='#'><span>MENU</span></a></li>
-       <li><a href='#'><span>BOOK HERE</span></a></li>
-       <li class='last'><a href='#'><span>HOME</span></a></li>
-    </ul>
-  </div>
+  // creates a new map
+    function initAutocomplete() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 58.937363, lng: 5.696214},
+        zoom: 16,
+        mapTypeId: 'roadmap'
+      });
 
-<!-- this is where the header ends-->
+      // Creates a search box for writing where you are
+      var input = document.getElementById('pac-input');
+      var searchBox = new google.maps.places.SearchBox(input);
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-<main>
-<!-- This is some about us text-->
-  <div class="find">
-      <h1> find our restaurants here</h1>
-  </div>
-</main>
+      var markers = [];
 
-    <!-- This is where the google maps implementation starts-->
+      // listener for marker place to get info
+      // more details for that place.
+      searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
 
-   <!-- tried to create a search box javascript implemen --->
-
-     <div id="map"></div>
-
-
-     <!-- this is the script for the actual map-->
-     <script>
-    function initMap(){
-
-
-      // The map options
-      var options = {
-        zoom:16, // how far zoomed in
-        center:{lat:58.97005,lng:5.73332} // where zoomed in
-      }
-
-      // Creates a new map
-      var map = new google.maps.Map(document.getElementById('map'), options);
-
-
-      // points where there are resturants
-      var markers = [
-        {
-          coords:{lat:58.97005,lng:5.73332},
-
-        },
-        {
-          coords:{lat:58.96338,lng:5.75382},
-
-        },
-        {
-          coords:{lat:58.970504797577476, lng:5.733140225727311}
-        },
-
-        {
-          coords:{lat:58.9698411320831, lng:5.735800977070085}
+        if (places.length == 0) {
+          return;
         }
 
-      ];
+        // Clears old markers when a new has been searched
+        markers.forEach(function(marker) {
+          marker.setMap(null);
+        });
+        markers = [];
 
-      // Loop through markers
-      for(var i = 0;i < markers.length;i++){
-        // Add marker
-        addMarker(markers[i]);
-      }
+        // For each place search an icon will apear and for place that does not have facts
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function(place) {
+          if (!place.geometry) {
+            console.log("Returned place contains no geometry");
+            return;
+          }
 
-      // Add Marker Function
-      function addMarker(props){
-        var marker = new google.maps.Marker({
-          position:props.coords,
-          map:map,
-          //icon:props.iconImage
+          //the icon
+          var icon = {
+            url: place.icon,
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(25, 25)
+          };
+
+          // Creates the marker for the place
+          markers.push(new google.maps.Marker({
+            map: map,
+            icon: icon,
+            title: place.name,
+            position: place.geometry.location
+          }));
+
+          if (place.geometry.viewport) {
+            // Only geocodes have viewport.
+            bounds.union(place.geometry.viewport);
+          }
+          else {
+            bounds.extend(place.geometry.location);
+          }
         });
 
-        //checks if the content is right
-        if(props.content){
-          var infoWindow = new google.maps.InfoWindow({
-            content:props.content
+        map.fitBounds(bounds);
+
+      });
+
+          // resturant 1 marker
+          var marker1 = new google.maps.Marker({
+            position: {lat:58.97005, lng:5.73332},
+            map: map
           });
 
-          marker.addListener('click', function(){
-            infoWindow.open(map, marker);
+          // this is a window
+          var infoWindow= new google.maps.InfoWindow({
+            content: '<h1> Resturant 3 </h1>   <button id="menu-button"> book table </button> <button id="menu-button">buy takeaway</button>'
           });
-        }
-      }
+
+          //this is a windo listener so that when it is clicked it apears
+          marker1.addListener('click', function (){
+            infoWindow.open(map, marker1);
+          });
+
+          // resturant 2 marker
+          var marker2 = new google.maps.Marker({
+            position: {lat:58.951957, lng:5.707396},
+            map: map
+          });
+
+          // this is the info box where the buttons are
+          var infoWindow2= new google.maps.InfoWindow({
+            content: '<h1> Resturant 2 </h1>   <button id="menu-button"> book table </button> <button id="menu-button">buy takeaway</button>'
+          });
+
+          // listener so when it is clicked the windo box appears
+          marker2.addListener('click', function (){
+            infoWindow2.open(map, marker2);
+          });
+
+
+
+          // resturant 3 marker
+          var marker3 = new google.maps.Marker({
+            position: {lat: 58.937363, lng: 5.696214},
+            map: map
+          });
+
+          // this is the info box where the buttons are
+          var infoWindow3= new google.maps.InfoWindow({
+            content: '<h1> Resturant 1 </h1>   <button id="menu-button"> book table </button> <button id="menu-button">buy takeaway</button>'
+          });
+
+          // listener so when it is clicked the windo box appears
+          marker3.addListener('click', function (){
+            infoWindow3.open(map, marker3);
+          });
+
+
+
+
+
     }
+
   </script>
 
-    <!-- A script file that retrives the google maps (REMEBER TO ADD your OWN KEY)-->
-     <script async defer
-       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzcAhxZdMLLsWdEY3BGQYWUW8xFGk3Ths&callback=initMap">
-     </script>
-  </div>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4-RBkjhy78qe2q5Nr4mLMRQ1jKN11Ixk&libraries=places&callback=initAutocomplete"
+       async defer></script>
 
-  <div class = "media">
+  </nav>
 
-    <h1> find us here </h1>
 
-    <scr="instatest1.jpg">
 
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- The buttons -->
+<button id="fb-button"></button>
+<button id="insta-button"></button>
+<button id="twitter-button"></button>
+
+<!-- This is for facebook-->
+<div id="fb-root">
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/nb_NO/sdk.js#xfbml=1&version=v3.2';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div class="fb-page" data-href="https://www.facebook.com/LEDuis/" data-tabs="timeline" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/LEDuis/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/LEDuis/">LED Linjeforening for Elektro &amp; Data</a></blockquote></div>
+</div>
+
+<!-- This is for twitter-->
+<nav id = "twitter">
+<a class="twitter-timeline" href="https://twitter.com/TwitterDev/timelines/539487832448843776?ref_src=twsrc%5Etfw">National Park Tweets - Curated tweets by TwitterDev</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</nav>
+
+<!-- Thi is from instagram! What to take into acount is that this is not created by me but by a website because getting an api from instagram is not easy-->
+<nav id= "insta"> <!-- creates an instagram feedx ot show pictures of food, trying to implimeyt it with cklickin abutton and hiding it if else-->
+  <script src="https://apps.elfsight.com/p/platform.js" defer></script>
+  <div class="elfsight-app-cee65a04-918c-4f28-8c64-aec5b2e1d959"></div>
+</nav>
+
+<!-- Script to hide/show social media-->
+<script>
+
+
+
+
+  // for facebook button
+  var button = document.querySelector('#fb-button');
+  var menu = document.querySelector('#fb-root');
+
+  //hides the div when the page is first entered.
+  menu.style.display = "none";
+
+  button.addEventListener('click', function (event) {
+        if (menu.style.display == "") {
+            menu.style.display = "none";
+            button.innerHTML = "";
+        } else {
+            menu.style.display = "";
+            button.innerHTML = " ";
+        }
+      }
+    );
+
+    // for twitter button
+    var button1 = document.querySelector('#twitter-button');
+    var menu1 = document.querySelector('#twitter');
+
+    //hides the div when the page is first entered.
+    menu1.style.display = "none";
+
+    button1.addEventListener('click', function (event) {
+          if (menu1.style.display == "") {
+              menu1.style.display = "none";
+              button1.innerHTML = "";
+          } else {
+              menu1.style.display = "";
+              button1.innerHTML = " ";
+          }
+        }
+      );
+
+    // hides and shows instagram
+    var button2 = document.querySelector('#insta-button');
+    var menu2 = document.querySelector('#insta');
+
+    //hides the div when the page is first entered.
+    menu2.style.display = "none";
+
+    button2.addEventListener('click', function (event) {
+          if (menu2.style.display == "") {
+              menu2.style.display = "none";
+              button2.innerHTML = "";
+          } else {
+              menu2.style.display = "";
+              button2.innerHTML = " ";
+          }
+        }
+      );
+  </script>
 
 </body>
+</html>
